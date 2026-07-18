@@ -6,8 +6,8 @@ pipeline {
         stage('Clone') {
             steps {
                 git branch: 'main',
-                credentialsId: 'github',
-                url: 'https://github.com/abinaya966/devops-project.git'
+                    credentialsId: 'github',
+                    url: 'https://github.com/abinaya966/devops-project.git'
             }
         }
 
@@ -19,23 +19,25 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'USERNAME',
+                    passwordVariable: 'PASSWORD'
+                )]) {
                     sh '''
                     echo $PASSWORD | docker login -u $USERNAME --password-stdin
-                    docker push abinaya1901/nginx-app:${BUILD_NUMBER}'
+                    docker push abinaya1901/nginx-app:${BUILD_NUMBER}
                     '''
-             }
-          }
-        }
-        stage('Update Helm Values') {
-             steps {
-                    sh """
-                    sed -i 's/tag:.*/tag: ${BUILD_NUMBER}/' helm/values.yaml
-                    cat helm/values.yaml
-                    """
-    }
-}
                 }
+            }
+        }
+
+        stage('Update Helm Values') {
+            steps {
+                sh """
+                sed -i 's/tag:.*/tag: ${BUILD_NUMBER}/' helm/values.yaml
+                cat helm/values.yaml
+                """
             }
         }
     }
