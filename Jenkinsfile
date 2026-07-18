@@ -13,7 +13,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t abinaya1901/nginx-app:v1 app/'
+                sh 'docker build -t abinaya1901/nginx-app:${BUILD_NUMBER} app/'
             }
         }
 
@@ -22,8 +22,19 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh '''
                     echo $PASSWORD | docker login -u $USERNAME --password-stdin
-                    docker push abinaya1901/nginx-app:v1
+                    docker push abinaya1901/nginx-app:${BUILD_NUMBER}'
                     '''
+             }
+          }
+        }
+        stage('Update Helm Values') {
+             steps {
+                    sh """
+                    sed -i 's/tag:.*/tag: ${BUILD_NUMBER}/' helm/values.yaml
+                    cat helm/values.yaml
+                    """
+    }
+}
                 }
             }
         }
