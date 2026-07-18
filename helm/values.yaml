@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: abinaya1901/nginx-app
-  tag: v1
+  tag: 9
   pullPolicy: IfNotPresent
 
 service:
