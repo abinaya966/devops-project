@@ -40,5 +40,15 @@ pipeline {
                 """
             }
         }
-    }
+       stage('Git Commit') {
+           steps {
+                sh '''
+                git config --global user.email "jenkins@example.com"
+                git config --global user.name "Jenkins"
+                git add helm/values.yaml
+                git commit -m "Updated image tag to ${BUILD_NUMBER}" || true
+                '''
+       }
+         }
+        }
 }
