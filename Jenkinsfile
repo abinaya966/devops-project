@@ -50,5 +50,19 @@ pipeline {
                 '''
        }
          }
+       stage('Git Push') {
+           steps {
+           withCredentials([usernamePassword(
+           credentialsId: 'github',
+           usernameVariable: 'GIT_USERNAME',
+           passwordVariable: 'GIT_TOKEN'
+        )]) {
+            sh '''
+            git remote set-url origin https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/abinaya966/devops-project.git
+            git push origin main
+            '''
+        }
+    }
+}
         }
 }
